@@ -43,8 +43,9 @@ From within the `backend` directory first ensure you are working using your crea
 To run the server, execute:
 
 ```bash
-export FLASK_APP=flaskr
-export FLASK_ENV=development
+cd 02_trivia_api/starter/backend&&
+export FLASK_APP=flaskr&&
+export FLASK_ENV=development&&
 flask run
 ```
 
