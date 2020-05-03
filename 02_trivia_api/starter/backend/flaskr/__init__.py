@@ -29,16 +29,15 @@ def create_app(test_config=None):
   '''
   @app.route('/categories')
   def retrieve_categories():
-    selection = Category.query.orderby(Category.id).all()
-    current_categories = paginate_categories(request, selection)
+    categories = list(map(Category.format, Category.query.order_by(Category.id).all()))
 
-    if len(current_categories) == 0:
+    if len(categories) == 0:
       abort(404)
 
     return jsonify({
-      'success': True,
-      'books': current_categories,
-      'total_books': len(Category.query.all())
+      "success": True,
+      "categories": categories,
+      'total_categories': len(Category.query.all())
     })
 
 
@@ -48,13 +47,13 @@ def create_app(test_config=None):
   including pagination (every 10 questions). 
   This endpoint should return a list of questions, 
   number of total questions, current category, categories. 
-
+  
   TEST: At this point, when you start the application
   you should see questions and categories generated,
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
-  def paginate_categories(request, selection):
+  def paginate_questions(request, selection):
     page = request.args.get('page', 1, type=int)
     start =  (page - 1) * QUESTIONS_PER_PAGE
     end = start + QUESTIONS_PER_PAGE
@@ -63,6 +62,23 @@ def create_app(test_config=None):
     current_questions = questions[start:end]
 
     return current_questions
+  
+  @app.route('/questions')
+  def retrieve_questions():
+    selection = list((Question.query.order_by(Question.id).all()))
+    current_quesions = paginate_questions(request,selection)
+    
+
+    if len(current_quesions) == 0:
+      abort(404)
+
+    return jsonify({
+      'success': True,
+      'questions': current_quesions,
+      'totalQuestions': len(Question.query.all())
+    })
+
+  
   '''
   @TODO: 
   Create an endpoint to DELETE question using a question ID. 
