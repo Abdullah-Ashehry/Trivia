@@ -27,7 +27,20 @@ def create_app(test_config=None):
   Create an endpoint to handle GET requests 
   for all available categories.
   '''
-  # @app.route()
+  @app.route('/categories')
+  def retrieve_categories():
+    selection = Category.query.orderby(Category.id).all()
+    current_categories = paginate_categories(request, selection)
+
+    if len(current_categories) == 0:
+      abort(404)
+
+    return jsonify({
+      'success': True,
+      'books': current_categories,
+      'total_books': len(Category.query.all())
+    })
+
 
   '''
   @TODO: 
@@ -41,7 +54,7 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
-  def paginate_books(request, selection):
+  def paginate_categories(request, selection):
     page = request.args.get('page', 1, type=int)
     start =  (page - 1) * QUESTIONS_PER_PAGE
     end = start + QUESTIONS_PER_PAGE
