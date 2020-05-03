@@ -20,13 +20,6 @@ def create_app(test_config=None):
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     return response
         
-
-
-  '''
-  @TODO: 
-  Create an endpoint to handle GET requests 
-  for all available categories.
-  '''
   @app.route('/categories')
   def retrieve_categories():
     categories = list(map(Category.format, Category.query.order_by(Category.id).all()))
@@ -41,18 +34,6 @@ def create_app(test_config=None):
     })
 
 
-  '''
-  @TODO: 
-  Create an endpoint to handle GET requests for questions, 
-  including pagination (every 10 questions). 
-  This endpoint should return a list of questions, 
-  number of total questions, current category, categories. 
-  
-  TEST: At this point, when you start the application
-  you should see questions and categories generated,
-  ten questions per page and pagination at the bottom of the screen for three pages.
-  Clicking on the page numbers should update the questions. 
-  '''
   def paginate_questions(request, selection):
     page = request.args.get('page', 1, type=int)
     start =  (page - 1) * QUESTIONS_PER_PAGE
@@ -86,6 +67,27 @@ def create_app(test_config=None):
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page. 
   '''
+  @app.route('/questions/<int:question_id>', methods=['DELETE'])
+  def delete_question(question_id):
+    try:
+      question = Question.query.filter(Question.id == question_id).one_or_none()
+
+      if question is None:
+        abort(404)
+
+      question.delete()
+      selection = Question.query.order_by(Question.id).all()
+      current_questions = paginate_questions(request, selection)
+
+      return jsonify({
+        'success': True,
+        'deleted': question_id,
+        'questions': current_questions,
+        'totalQuestions': len(Question.query.all())
+      })
+
+    except:
+      abort(422)      
 
   '''
   @TODO: 
