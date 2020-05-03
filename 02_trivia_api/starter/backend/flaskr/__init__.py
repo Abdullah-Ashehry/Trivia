@@ -27,7 +27,7 @@ def create_app(test_config=None):
   Create an endpoint to handle GET requests 
   for all available categories.
   '''
-
+  # @app.route()
 
   '''
   @TODO: 
@@ -41,7 +41,15 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
+  def paginate_books(request, selection):
+    page = request.args.get('page', 1, type=int)
+    start =  (page - 1) * QUESTIONS_PER_PAGE
+    end = start + QUESTIONS_PER_PAGE
 
+    questions = [question.format() for question in selection]
+    current_questions = questions[start:end]
+
+    return current_questions
   '''
   @TODO: 
   Create an endpoint to DELETE question using a question ID. 
