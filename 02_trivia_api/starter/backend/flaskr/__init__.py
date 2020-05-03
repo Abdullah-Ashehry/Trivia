@@ -14,10 +14,16 @@ def create_app(test_config=None):
   setup_db(app)
   CORS(app)
 
+  # @app.after_request
+  # def after_request(response):
+  #   response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
+  #   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  #   return response
+
   @app.after_request
-  def after_request(response):
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  def handle_response(response):
+    header = response.headers
+    header['Access-Control-Allow-Origin'] = '*'
     return response
         
   @app.route('/categories')
@@ -92,6 +98,31 @@ def create_app(test_config=None):
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.  
   '''
+  @app.route('/questions', methods=['POST'])
+  def post_question():
+    body = request.get_json()
+
+    new_question = body.get('question',None)
+    new_answer = body.get('answer', None)
+    new_category = body.get('category', None)
+    new_difficulty = body.get('difficulty', None)
+    
+    try:
+      question = Question(question = new_question, answer = new_answer, category = new_category, difficulty = new_difficulty)
+      question.insert()
+
+      selection = Question.query.order_by(Question.id).all()
+      current_questions = paginate_questions(request, selection)
+
+      return jsonify({
+        'success': True,
+        'created': question.id,
+        'questions': current_questions,
+        'totalQuestions': len(Question.query.all())
+      })
+
+    except:
+      abort(422)
 
   '''
   @TODO: 
@@ -126,11 +157,6 @@ def create_app(test_config=None):
   and shown whether they were correct or not. 
   '''
 
-  '''
-  @TODO: 
-  Create error handlers for all expected errors 
-  including 404 and 422. 
-  '''
   @app.errorhandler(404)
   def not_found(error):
     return jsonify({
