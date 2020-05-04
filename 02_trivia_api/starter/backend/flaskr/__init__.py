@@ -47,6 +47,7 @@ def create_app(test_config=None):
   @app.route('/questions')
   def retrieve_questions():
     selection = list((Question.query.order_by(Question.id).all()))
+    categories = list(( Category.query.all()))
     current_quesions = paginate_questions(request,selection)
     
 
@@ -56,6 +57,7 @@ def create_app(test_config=None):
     return jsonify({
       'success': True,
       'questions': current_quesions,
+      "categories": categories,
       'totalQuestions': len(Question.query.all())
     })
 
@@ -154,11 +156,12 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
-  @app.route('/quizzes')
-  def quizzes_questions():
-    body = request.get_json()   
-    question_category = body.get('category', None)
-    selection = list(Question.query.filter(Question.category == question_category).all())
+  # @app.route('/quizzes')
+  # def quizzes_questions():
+  #   body = request.get_json()   
+  #   question_category = body.get('category', None)
+  #   selection = list(Question.query.filter(Question.category == question_category).all())
+
 
 
 
