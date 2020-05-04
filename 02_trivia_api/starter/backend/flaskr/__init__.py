@@ -47,11 +47,10 @@ def create_app(test_config=None):
   @app.route('/questions')
   def retrieve_questions():
     selection = list((Question.query.order_by(Question.id).all()))
-    categories = list(( Category.query.all()))
+    categories = list(map(Category.format, Category.query.all()))
     current_quesions = paginate_questions(request,selection)
     
-
-    if len(current_quesions) == 0:
+    if (len(current_quesions) == 0):
       abort(404)
 
     return jsonify({
