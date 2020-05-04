@@ -14,12 +14,6 @@ def create_app(test_config=None):
   setup_db(app)
   CORS(app)
 
-  # @app.after_request
-  # def after_request(response):
-  #   response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
-  #   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-  #   return response
-
   @app.after_request
   def handle_response(response):
     header = response.headers
@@ -114,16 +108,24 @@ def create_app(test_config=None):
     except:
       abort(422)
 
-  '''
-  @TODO: 
-  Create a POST endpoint to get questions based on a search term. 
-  It should return any questions for whom the search term 
-  is a substring of the question. 
+  @app.route('/questions/search')
+  def search_questions():
+      try:
+        body = request.get_json()
+        search_term = body.get('search', None) 
+        selection = Question.query.filter(Question.question.ilike('%{}%'.format(search_term)))
+        questions = paginate_questions(request,selection)
 
-  TEST: Search by any phrase. The questions list will update to include 
-  only question that include that string within their question. 
-  Try using the word "title" to start. 
-  '''
+        if(len(questions) == 0): 
+              abort(400)
+        
+        return jsonify({
+          'success': True,
+          'questions': questions,
+          'number of results': len(questions)
+        })
+      except:
+        abort(404)
 
   '''
   @TODO: 
@@ -160,6 +162,15 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  @app.route('/quizzes')
+  def quizzes_questions():
+    body = request.get_json()   
+    question_category = body.get('category', None)
+    selection = list(Question.query.filter(Question.category == question_category).all())
+
+
+
+
 
   @app.errorhandler(404)
   def not_found(error):
