@@ -22,7 +22,9 @@ def create_app(test_config=None):
         
   @app.route('/categories')
   def retrieve_categories():
-    categories = list(map(Category.format, Category.query.order_by(Category.id).all()))
+    # categories = list(map(Category.format, Category.query.order_by(Category.id).all()))
+    categories = [cat.format() for cat in Category.query.all()]
+
 
     if len(categories) == 0:
       abort(404)
@@ -46,8 +48,9 @@ def create_app(test_config=None):
   
   @app.route('/questions')
   def retrieve_questions():
-    selection = list((Question.query.order_by(Question.id).all()))
-    categories = list(map(Category.format, Category.query.all()))
+    # selection = list((Question.query.order_by(Question.id).all()))
+    selection = [ques.format() for ques in Question.query.order_by(Question.id).all()]
+    categories = [cat.format() for cat in Category.query.all()]
     current_quesions = paginate_questions(request,selection)
     
     if (len(current_quesions) == 0):
@@ -109,12 +112,13 @@ def create_app(test_config=None):
     except:
       abort(422)
 
-  @app.route('/questions/search')
+  @app.route('/questions/search', methods=['POST'])
   def search_questions():
       try:
         body = request.get_json()
         search_term = body.get('search', None) 
-        selection = Question.query.filter(Question.question.ilike('%{}%'.format(search_term)))
+        selection = Question.query.filter(Question.question.ilike('%{}%'.format('searchTerm'))).all()
+
         questions = paginate_questions(request,selection)
 
         if(len(questions) == 0): 
