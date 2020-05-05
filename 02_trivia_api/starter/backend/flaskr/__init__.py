@@ -165,9 +165,42 @@ def create_app(test_config=None):
   #   question_category = body.get('category', None)
   #   selection = list(Question.query.filter(Question.category == question_category).all())
 
-
-
-
+  @app.route('/quizzes', methods=["POST"]) 
+  def post_quizzes():
+    '''
+    Returns a single question from the database
+    Filters the questions already sent to the client
+    '''
+    try:
+      data = request.get_json()
+      # check given category
+      category_id = int(data["quiz_category"]["id"])
+      category = Category.query.get(category_id)
+      previous_questions = data["previous_questions"]
+      if not category == None:  
+        if "previous_questions" in data and len(previous_questions) > 0:
+          questions = Question.query.filter(
+            Question.id.notin_(previous_questions),
+            Question.category == category.id
+            ).all()  
+        else:
+          questions = Question.query.filter(Question.category == category.id).all()
+      else:
+        if "previous_questions" in data and len(previous_questions) > 0:
+          questions = Question.query.filter(Question.id.notin_(previous_questions)).all()  
+        else:
+          questions = Question.query.all()
+      max = len(questions) - 1
+      if max > 0:
+        question = questions[random.randint(0, max)].format()
+      else:
+        question = False
+      return jsonify({
+        "success": True,
+        "question": question
+      })
+    except:
+      abort(500, "An error occured while trying to load the next question")
 
 
   @app.errorhandler(404)
