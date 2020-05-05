@@ -119,9 +119,10 @@ def create_app(test_config=None):
         search_term = request.form.get('searchTerm', '')
        
 
-        selection = Question.query.filter(Question.question.ilike('%{}%'.format('search_term'))).all()
+        selection = Question.query.filter(Question.question.ilike('%{}%'.format('searchTerm'))).all()
         paginate = paginate_questions(request,selection)
-        questions =  list(map(Question.format, paginate))
+        questions = [que.format() for que in paginate]
+        
 
         if(len(questions) == 0): 
               abort(400)
