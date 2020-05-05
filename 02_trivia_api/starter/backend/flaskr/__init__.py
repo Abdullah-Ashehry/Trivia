@@ -120,8 +120,8 @@ def create_app(test_config=None):
        
 
         selection = Question.query.filter(Question.question.ilike('%{}%'.format('searchTerm'))).all()
-        paginate = paginate_questions(request,selection)
-        questions = [que.format() for que in paginate]
+        # paginate = paginate_questions(request,selection)
+        questions = [que.format() for que in selection]
         
 
         if(len(questions) == 0): 
