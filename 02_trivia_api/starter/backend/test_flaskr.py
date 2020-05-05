@@ -116,12 +116,12 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'unprocessable')
     
     def test_create_new_question(self):
-        res = self.client().post('/books', json=self.new_question)
+        res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
         pass
     
     def test_422_if_book_creation_fails(self):
-        res = self.client().post('/books', json=self.new_question)
+        res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
         pass
 
