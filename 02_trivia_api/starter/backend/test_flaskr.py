@@ -46,7 +46,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertTrue(data['total_questions'])
+        self.assertTrue(data['totalQuestions'])
         self.assertTrue(len(data['questions']))
 
     def test_404_sent_requesting_beyond_valid_page(self):
@@ -63,7 +63,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertTrue(data['total_questions'])
+        self.assertTrue(data['totalQuestions'])
         self.assertEqual(len(data['questions']), 2)
 
     def test_get_question_search_without_results(self):
@@ -72,7 +72,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['total_questions'], 0)
+        self.assertEqual(data['totalQuestions'], 0)
         self.assertEqual(len(data['questions']), 0)
 
     def test_update_question_difficulty(self):
@@ -120,7 +120,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
         pass
     
-    def test_422_if_book_creation_fails(self):
+    def test_422_if_question_creation_fails(self):
         res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
         pass
