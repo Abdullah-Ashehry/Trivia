@@ -114,15 +114,15 @@ def create_app(test_config=None):
 
   @app.route('/searchQuestions',  methods=['POST'])
   def search_questions():
-      try:
+      # try:
         body = request.get_json()
         search_term = request.form.get('searchTerm', '')
        
 
         selection = Question.query.filter(Question.question.ilike('%{}%'.format('searchTerm'))).all()
-        # paginate = paginate_questions(request,selection)
+        paginate = paginate_questions(request,selection)
         questions = [que.format() for que in selection]
-        
+         
 
         if(len(questions) == 0): 
               abort(400)
@@ -133,8 +133,8 @@ def create_app(test_config=None):
           "totalQuestions": len(questions)
         }
         return jsonify(result)
-      except:
-        abort(404)
+      # except:
+      #   abort(404)
 
   @app.route('/categories/<int:category_id>/questions')
   def questions_by_category(category_id):
