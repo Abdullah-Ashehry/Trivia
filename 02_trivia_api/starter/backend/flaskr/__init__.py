@@ -24,11 +24,9 @@ def create_app(test_config=None):
   def retrieve_categories():
     categories = [cat.format() for cat in Category.query.all()]
 
-
     if len(categories) == 0:
       abort(404)
 
-    
     return jsonify({
       "success": True,
       "categories": categories,
@@ -168,13 +166,9 @@ def create_app(test_config=None):
   
   @app.route('/quizzes', methods=["POST"]) 
   def post_quizzes():
-    '''
-    Returns a single question from the database
-    Filters the questions already sent to the client
-    '''
     try:
       data = request.get_json()
-      # check given category
+    
       category_id = int(data["quiz_category"]["id"])
       category = Category.query.get(category_id)
       previous_questions = data["previous_questions"]
