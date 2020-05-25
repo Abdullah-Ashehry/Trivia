@@ -24,6 +24,19 @@ class TriviaTestCase(unittest.TestCase):
             'category' : '3',
             'difficulty' : '4'
         }
+        
+        self.questions_category = {
+            'id' : '4'
+        }
+        
+        self.quiz_category = {
+            'previous_questions': [5, 9],
+            'quiz_category': {
+                'type': 'History',
+                'id': 4
+            }}
+        
+
 
         # binds the app to the current context
         with self.app.app_context():
@@ -36,6 +49,14 @@ class TriviaTestCase(unittest.TestCase):
         """Executed after reach test"""
         pass
 
+    def test_get_categories(self):
+        res = self.get.client.get('categories')
+        data = json.load(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['total_categories']) 
+        self.assertTrue(len(data['categories']))    
 
     def test_get_paginated_questions(self):
         res = self.client().get('/questions')
@@ -50,8 +71,16 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get('/questions?page=1000')
         data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 500)
+        self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
+
+    def test_404_if_question_does_not_exist(self):
+        res = self.client().delete('/questions/1000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unprocessable')
         
 
     def test_get_question_search_with_results(self):
@@ -72,24 +101,6 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['totalQuestions'], 0)
         
 
-    # def test_update_question_difficulty(self):
-    #     res = self.client().patch('/questions/5', json={'difficulty': 2})
-    #     data = json.loads(res.data)
-    #     question = Question.query.filter(Question.id == 5).one_or_none()
-
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertEqual(data['success'], True)
-    #     self.assertEqual(Question.format()['difficulty'], 6)
-
-
-    # def test_400_for_failed_update(self):
-    #     res = self.client().patch('/questions/5')
-    #     data = json.loads(res.data)
-
-    #     self.assertEqual(res.status_code, 400)
-    #     self.assertEqual(data['success'], False)
-    #     self.assertEqual(data['message'], 'bad request')
-
     def test_delete_question(self):
         res = self.client().delete('/questions/5')
         data = json.loads(res.data)
@@ -103,16 +114,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(len(data['questions']))
         self.assertEqual(Question, None)
         
-
-    def test_404_if_question_does_not_exist(self):
-        res = self.client().delete('/questions/1000')
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 422)
-        self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Unprocessable')
     
-    def test_create_new_question(self):
+    def test_post_new_question(self):
         res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
         pass
@@ -121,6 +124,19 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
         pass
+
+    def test_questions_by_category(self):
+        res = self.client().post('categories', json=self.questions_category)
+        data = json.loads(res.data)
+        pass
+    
+    def test_quiz_random_question(self):
+        response = self.client().post('/quizzes', 
+                json=self.quiz_category)
+        data = json.loads(response.data.decode('utf-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['question']) 
 
 
 

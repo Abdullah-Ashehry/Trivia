@@ -43,7 +43,7 @@ From within the `backend` directory first ensure you are working using your crea
 To run the server, execute:
 
 ```bash
-cd starter/backend&&
+cd 02_trivia_api/starter/backend/&&
 export FLASK_APP=flaskr&&
 export FLASK_ENV=development&&
 flask run
@@ -94,6 +94,7 @@ GET '/categories'
 ## Testing
 To run the tests, run
 ```
+cd 02_trivia_api/starter/backend/&&
 dropdb trivia_test&&
 createdb trivia_test&&
 psql trivia_test < trivia.psql&&
