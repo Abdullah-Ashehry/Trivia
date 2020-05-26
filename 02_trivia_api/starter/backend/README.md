@@ -98,6 +98,9 @@ GET '/categories'
 ## Testing
 To run the tests, run
 ```
+testing is done in the virtual environment instructions are above
+
+
 cd 02_trivia_api/starter/backend/&&
 dropdb trivia_test&&
 createdb trivia_test&&

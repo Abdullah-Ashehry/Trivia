@@ -54,7 +54,15 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_categories']) 
-        self.assertTrue(len(data['categories']))    
+        self.assertTrue(len(data['categories']))  
+
+    def test_post_categories(self):
+        res = self.client().post('/categories', json = {'type' : 'cute'})
+        data = json.loads(res.data)  
+        
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
 
     def test_get_paginated_questions(self):
         res = self.client().get('/questions')
@@ -103,20 +111,22 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().delete('/questions/12')
         data = json.loads(res.data)
 
-        # question = Question.query.filter(Question.id == 4).one_or_none()
-
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(data['deleted'], 1)
         self.assertTrue(data['totalQuestions'])
         self.assertTrue(len(data['questions']))
-        # self.assertEqual(Question, None)
+        
         
     
     def test_post_new_question(self):
         res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
-        pass
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+        
     
     def test_422_if_question_creation_fails(self):
         res = self.client().post('/questions', json=self.new_question)
@@ -126,7 +136,10 @@ class TriviaTestCase(unittest.TestCase):
     def test_questions_by_category(self):
         res = self.client().post('categories', json=self.questions_category)
         data = json.loads(res.data)
-        pass
+        
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
     
     def test_quiz_random_question(self):
         response = self.client().post('/quizzes', 
@@ -134,7 +147,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(response.data.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
-        # self.assertTrue(data['question']) 
+        
 
 
 
