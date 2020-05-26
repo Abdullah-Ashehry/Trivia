@@ -40,23 +40,21 @@ def create_app(test_config=None):
   @app.route('/categories', methods=['POST'])
   def post_category():
       body = request.get_json()
-      new_type = body.get('type',None)
+      new_type = str(body.get('type',None))
       categories = Category.query.all()
       catgs = {cat.id:cat.type for cat in categories}
         
       try:  
-        category = Category(type = new_type)
-        category.insert()
+        new_category = Category(type = new_type)
+        new_category.insert()
         categories = Category.query.all()
         catgs = {cat.id:cat.type for cat in categories}
-        
         
         return jsonify({
         'success': True,
         'categories': catgs,
         'totalCategories': len(Category.query.all())
       })
-
       except:
           abort(422)
           
@@ -116,7 +114,7 @@ def create_app(test_config=None):
   @app.route('/questions', methods=['POST'])
   def post_question():
     body = request.get_json()
-
+ 
     new_question = body.get('question',None)
     new_answer = body.get('answer', None)
     new_category = body.get('category', None)
