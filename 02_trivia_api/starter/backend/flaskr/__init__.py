@@ -14,11 +14,19 @@ def create_app(test_config=None):
   setup_db(app)
   CORS(app)
 
+  # @app.after_request
+  # def handle_response(response):
+  #   header = response.headers
+  #   header['Access-Control-Allow-Origin'] = '*'
+  #   return response
+
   @app.after_request
-  def handle_response(response):
-    header = response.headers
-    header['Access-Control-Allow-Origin'] = '*'
-    return response
+  def add_cors_headers(response):
+        response.headers.add('Access-Control-Allow-Headers',
+                             'Content-Type, Authorization')
+        response.headers.add('Access-Control-Allow-Methods',
+                             'GET, PUT, POST, PATCH, DELETE, OPTIONS')
+        return response
         
   @app.route('/categories')
   def retrieve_categories():
@@ -49,20 +57,21 @@ def create_app(test_config=None):
    
     selection = list(Question.query.order_by(Question.id).all())
     current_quesions = paginate_questions(request,selection)
-    
+    categories = [cat.format() for cat in Category.query.all()]
     if (len(current_quesions) == 0):
       abort(404)
 
     return jsonify({
       'success': True,
       'questions': current_quesions,
+      'categories' : categories,
       'totalQuestions': len(Question.query.all())
     })
 
   
   @app.route('/questions/<int:question_id>', methods=['DELETE'])
   def delete_question(question_id):
-    try:
+    # try:
       question = Question.query.filter(Question.id == question_id).one_or_none()
 
       if question is None:
@@ -79,8 +88,8 @@ def create_app(test_config=None):
         'totalQuestions': len(Question.query.all())
       })
 
-    except:
-      abort(422)      
+    # except:
+      # abort(422)      
 
   @app.route('/questions', methods=['POST'])
   def post_question():
