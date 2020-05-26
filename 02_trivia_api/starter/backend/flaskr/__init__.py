@@ -36,6 +36,30 @@ def create_app(test_config=None):
       "categories": catgs,
       'total_categories': len(Category.query.all())
     })
+  
+  @app.route('/categories', methods=['POST'])
+  def post_category():
+      body = request.get_json()
+      new_type = body.get('type',None)
+      categories = Category.query.all()
+      catgs = {cat.id:cat.type for cat in categories}
+        
+      try:  
+        category = Category(type = new_type)
+        category.insert()
+        categories = Category.query.all()
+        catgs = {cat.id:cat.type for cat in categories}
+        
+        
+        return jsonify({
+        'success': True,
+        'categories': catgs,
+        'totalCategories': len(Category.query.all())
+      })
+
+      except:
+          abort(422)
+          
 
 
   def paginate_questions(request, selection):

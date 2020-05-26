@@ -42,7 +42,8 @@ class FormView extends Component {
         question: this.state.question,
         answer: this.state.answer,
         difficulty: this.state.difficulty,
-        category: this.state.category
+        category: this.state.category,
+        rating: this.state.rating
       }),
       xhrFields: {
         withCredentials: true
@@ -54,6 +55,31 @@ class FormView extends Component {
       },
       error: (error) => {
         alert('Unable to add question. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  submitCategory = (event) => {
+    event.preventDefault();
+    $.ajax({
+      url: '/categories', //TODO: update request URL
+      type: "POST",
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        type: this.state.type
+      }),
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
+      success: (result) => {
+        document.getElementById("add-category-form").reset();
+        return;
+      },
+      error: (error) => {
+        alert('Unable to add category. Please try your request again')
         return;
       }
     })
@@ -105,6 +131,14 @@ class FormView extends Component {
                   )
                 })}
             </select>
+          </label>
+          <input type="submit" className="button" value="Submit" />
+        </form>
+        <h2>Add a New Category</h2>
+        <form className="form-view" id="add-category-form" onSubmit={this.submitCategory}>
+          <label>
+            Type
+            <input type="text" name="type" onChange={this.handleChange}/>
           </label>
           <input type="submit" className="button" value="Submit" />
         </form>
