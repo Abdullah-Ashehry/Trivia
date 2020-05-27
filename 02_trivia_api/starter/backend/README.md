@@ -77,9 +77,13 @@ This README is missing documentation of your endpoints. Below is an example for 
 
 Endpoints
 GET '/categories'
-GET ...
-POST ...
-DELETE ...
+POST '/categories'
+GET '/questions'
+DELETE '/questions/<int:question_id>'
+POST '/questions'
+POST '/searchQuestions'
+GET '/categories/<int:category_id>/questions'
+POST '/quizzes'
 
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
@@ -92,8 +96,132 @@ GET '/categories'
 '5' : "Entertainment",
 '6' : "Sports"}
 
-```
 
+POST '/categories'
+- Sends to the database a new category by sending an object type Category and defining only the type of the category only.
+- Request Arguments: None
+- Returns: the status of the operation, a dictionary of category and the number of current categories.
+{'1' : "Science",
+'2' : "Art",
+'3' : "Geography",
+'4' : "History",
+'5' : "Entertainment",
+'6' : "Sports"}
+
+GET '/questions'
+- Fetches a list of questions ordered by id and then they are paginated and then it fetches the categories and order them by id.
+- Request Arguments: None
+- Returns: the status of the operation , a dictionary of questions , the categories and the number of the questions.
+{
+  "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports", 
+    "7": "Cool"
+  }, 
+  "questions": [
+    {
+      "answer": "Apollo 13", 
+      "category": 5, 
+      "difficulty": 4, 
+      "id": 2, 
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?", 
+      "rating": null
+    }, 
+    "success": true, 
+  "totalQuestions": 23
+}
+
+
+DELETE '/questions/<int:question_id>'
+- Deletes a selected questions by calling the method delete() in models.py from the database.
+- Request Arguments: Questions.id.
+- Returns: the status of the operation, the id of the deleted question, a dictionary of Questions, the total number of Questions.
+{
+  "deleted": 12,
+  "questions": [
+    {
+      "answer": "Apollo 13",
+      "category": 5,
+      "difficulty": 4,
+      "id": 2,
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?",
+      "rating": null
+    },
+    "success": true,
+  "totalQuestions": 22
+}
+
+POST '/questions'
+- Sends a new questions to database from the frontend by filling out the attributes of Question and inserting it by using insert() in models.py.
+- Request Arguments: None
+- Returns: the status of the insertion, the id of the new posted question, a dictionary of the Questions, the total number of Questions.
+
+
+POST '/searchQuestions'
+- Sends a string to be matched with the other Question.question in the database using ilike.
+- Request Arguments: None.
+- Returns: the status of the search, the questions that matched it as a dictionary, the total number of questions that matched the string.
+{
+  "questions": [
+    {
+      "answer": "Apollo 13",
+      "category": 5,
+      "difficulty": 4,
+      "id": 2,
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?",
+      "rating": null
+    }
+  ],
+  "success": true,
+  "totalQuestions": 1
+}
+
+GET '/categories/<int:category_id>/questions'
+- Sends an id number matching an id number of Category.id and sends that Questions.Category.id back only.
+- Request Arguments: Category.id.
+- Returns: the status of the operation, a dictionary of questions mathcing the condition, the total number of questions that match it.
+{
+  "questions": [
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?",
+      "rating": null
+    },
+    {
+      "answer": "Muhammad Ali",
+      "category": 4,
+      "difficulty": 1,
+      "id": 9,
+      "question": "What boxer's original name is Cassius Clay?",
+      "rating": null
+    },
+    {
+      "answer": "Scarab",
+      "category": 4,
+      "difficulty": 4,
+      "id": 23,
+      "question": "Which dung beetle was worshipped by the ancient Egyptians?",
+      "rating": null
+    }
+  ],
+  "success": true,
+  "totalQuestions": 3
+}
+
+
+POST '/quizzes'
+- Recieves a category id for the Question.Categoty and then it stores the displayed questions in an array so they won't be displayed later, if you answer correctly it will increase your point if you answer wrong the questions will be terminated and it will display the current score.
+- Request Arguments: None.
+- Returns: the status of the operation and a question.
+
+```
 
 ## Testing
 To run the tests, run

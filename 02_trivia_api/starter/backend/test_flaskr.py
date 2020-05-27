@@ -113,7 +113,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['deleted'], 1)
+        self.assertEqual(data['deleted'], 12)
         self.assertTrue(data['totalQuestions'])
         self.assertTrue(len(data['questions']))
         

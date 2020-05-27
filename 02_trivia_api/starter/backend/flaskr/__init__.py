@@ -39,12 +39,12 @@ def create_app(test_config=None):
   
   @app.route('/categories', methods=['POST'])
   def post_category():
-      body = request.get_json()
-      new_type = str(body.get('type',None))
-      categories = Category.query.all()
-      catgs = {cat.id:cat.type for cat in categories}
+    body = request.get_json()
+    new_type = str(body.get('type',None))
+    categories = Category.query.all()
+    catgs = {cat.id:cat.type for cat in categories}
         
-      try:  
+    try:  
         new_category = Category(type = new_type)
         new_category.insert()
         categories = Category.query.all()
@@ -55,8 +55,8 @@ def create_app(test_config=None):
         'categories': catgs,
         'totalCategories': len(Category.query.all())
       })
-      except:
-          abort(422)
+    except:
+        abort(422)
           
 
 
@@ -103,7 +103,7 @@ def create_app(test_config=None):
 
       return jsonify({
         'success': True,
-        'deleted': 1,
+        'deleted': question.id,
         'questions': current_questions,
         'totalQuestions': len(Question.query.all())
       })
@@ -115,7 +115,7 @@ def create_app(test_config=None):
   def post_question():
     body = request.get_json()
  
-    new_question = body.get('question',None)
+    new_question = body.get('question', None)
     new_answer = body.get('answer', None)
     new_category = body.get('category', None)
     new_difficulty = body.get('difficulty', None)
